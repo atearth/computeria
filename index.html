@@ -1,1 +1,525 @@
 
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allensbacher Computeria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── CSS variables – two themes ── */
+    :root {
+      --bg:          #f5f0e8;
+      --bg2:         #eae3d3;
+      --surface:     #ffffff;
+      --border:      #c8bfaa;
+      --text:        #1a1209;
+      --muted:       #5c5142;
+      --accent:      #c0392b;
+      --accent2:     #e74c3c;
+      --accent-dim:  #f5c6c2;
+      --nav-bg:      #1a1209;
+      --nav-text:    #f5f0e8;
+      --card-shadow: 0 4px 24px rgba(0,0,0,.08);
+      --radius:      10px;
+      --transition:  .35s ease;
+    }
+    [data-theme="dark"] {
+      --bg:          #12100d;
+      --bg2:         #1c1812;
+      --surface:     #242018;
+      --border:      #3a342a;
+      --text:        #f0e8d8;
+      --muted:       #a09070;
+      --accent:      #e74c3c;
+      --accent2:     #ff6b5e;
+      --accent-dim:  #3d1510;
+      --nav-bg:      #0a0907;
+      --nav-text:    #f0e8d8;
+      --card-shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background var(--transition), color var(--transition);
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      transition: background var(--transition);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      letter-spacing: .03em;
+      color: var(--nav-text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent2); }
+    .nav-links {
+      display: flex;
+      gap: 1.8rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--nav-text);
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 400;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      opacity: .8;
+      transition: opacity .2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    /* theme toggle */
+    .theme-btn {
+      background: none;
+      border: 1.5px solid rgba(255,255,255,.3);
+      color: var(--nav-text);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .2s, transform .3s;
+      flex-shrink: 0;
+    }
+    .theme-btn:hover { border-color: rgba(255,255,255,.7); transform: rotate(20deg); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      padding: 7rem 2rem 6rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    /* subtle city-skyline silhouette via SVG background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300'%3E%3Cpath fill='%23ffffff08' d='M0,300 L0,180 L60,180 L60,150 L90,150 L90,130 L110,130 L110,110 L130,110 L130,130 L150,130 L150,150 L160,150 L160,100 L180,100 L180,80 L200,80 L200,100 L220,100 L220,150 L260,150 L260,160 L280,160 L280,140 L310,140 L310,120 L340,120 L340,90 L360,90 L360,70 L380,70 L380,90 L400,90 L400,120 L430,120 L430,140 L460,140 L460,160 L500,160 L500,170 L530,170 L530,150 L560,150 L560,130 L580,130 L580,110 L600,100 L620,110 L640,130 L640,150 L660,150 L660,170 L700,170 L700,160 L730,160 L730,130 L760,130 L760,100 L790,100 L790,80 L810,80 L810,100 L840,100 L840,130 L870,130 L870,160 L900,160 L900,170 L940,170 L940,150 L970,150 L970,130 L1000,130 L1000,110 L1020,110 L1020,130 L1050,130 L1050,150 L1080,150 L1080,180 L1200,180 L1200,300 Z'/%3E%3C/svg%3E") center bottom / cover no-repeat;
+    }
+    .hero-eyebrow {
+      font-size: .85rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      opacity: .6;
+      margin-bottom: .6rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -.02em;
+    }
+    .hero h1 span { color: var(--accent2); }
+    .hero-tagline {
+      margin-top: 1.4rem;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-weight: 300;
+      opacity: .85;
+      max-width: 560px;
+      margin-inline: auto;
+    }
+    .hero-cta {
+      margin-top: 2.4rem;
+      display: inline-flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: .75rem 2rem;
+      border-radius: var(--radius);
+      font-size: .95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-outline  { background: transparent; color: var(--nav-text); border: 1.5px solid rgba(255,255,255,.4); }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: .72rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: .25rem .8rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+    }
+    .lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    /* ── SERVICES GRID ── */
+    .services-bg { background: var(--bg2); transition: background var(--transition); }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+      transition: background var(--transition), border-color var(--transition), transform .2s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      margin-bottom: .7rem;
+    }
+    .card ul {
+      list-style: none;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+    .card ul li { padding: .3rem 0; padding-left: 1.2rem; position: relative; }
+    .card ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: .8rem;
+    }
+
+    /* ── PROMISE STRIP ── */
+    .promise {
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+    }
+    .promise h2 { color: #fff; margin-bottom: .5rem; }
+    .promise p { opacity: .9; font-size: 1.05rem; max-width: 620px; margin: 0 auto; }
+    .promise-icons {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .pi {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      font-size: .9rem;
+      opacity: .9;
+    }
+    .pi-icon { font-size: 2rem; }
+
+    /* ── COURSES ── */
+    .courses-list {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .course-item {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      box-shadow: var(--card-shadow);
+      transition: background var(--transition), transform .2s;
+    }
+    .course-item:hover { transform: translateX(6px); }
+    .course-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .course-text { font-size: .98rem; }
+    .course-note {
+      margin-top: .4rem;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+
+    /* ── CONTACT ── */
+    .contact-bg { background: var(--bg2); transition: background var(--transition); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 640px) { .contact-grid { grid-template-columns: 1fr; } }
+    .contact-block h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: .8rem;
+      color: var(--accent);
+    }
+    .contact-block p, .contact-block a {
+      font-size: .95rem;
+      color: var(--text);
+      text-decoration: none;
+      display: block;
+      margin-bottom: .3rem;
+    }
+    .contact-block a:hover { color: var(--accent); }
+    .hours-table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+    .hours-table td { padding: .3rem 0; }
+    .hours-table td:first-child { color: var(--accent); font-weight: 600; padding-right: 1.5rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      text-align: center;
+      padding: 2rem;
+      font-size: .82rem;
+      opacity: .8;
+      transition: background var(--transition);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow  { animation: fadeUp .6s ease both; }
+    .hero h1       { animation: fadeUp .7s .1s ease both; }
+    .hero-tagline  { animation: fadeUp .7s .2s ease both; }
+    .hero-cta      { animation: fadeUp .7s .3s ease both; }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#"><span>C</span>omputeria</a>
+  <ul class="nav-links">
+    <li><a href="#leistungen">Leistungen</a></li>
+    <li><a href="#kurse">Kurse</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <button class="theme-btn" id="themeToggle" aria-label="Theme wechseln">🌙</button>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <p class="hero-eyebrow">Allensbacher</p>
+  <h1><span>Computeria</span></h1>
+  <p class="hero-tagline">Wir helfen bei Computerproblemen – geduldig, verständlich und ohne Fachbegriffe.</p>
+  <div class="hero-cta">
+    <a href="#leistungen" class="btn btn-primary">Unsere Leistungen</a>
+    <a href="#kontakt" class="btn btn-outline">Kontakt &amp; Öffnungszeiten</a>
+  </div>
+</header>
+
+<!-- ── SERVICES ── -->
+<section class="services-bg" id="leistungen">
+  <div class="container">
+    <span class="section-label">Was wir anbieten</span>
+    <h2>Hilfe, die wirklich hilft</h2>
+    <p class="lead">Von PC und Laptop bis hin zu Smartphone und Internet – wir begleiten Sie Schritt für Schritt.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>PC- und Laptop-Hilfe</h3>
+        <ul>
+          <li>Bedienung von Word, Excel oder E-Mail</li>
+          <li>Schutz vor Viren und Spam</li>
+          <li>Online-Banking &amp; Videoanrufe</li>
+          <li>Digitale Fotobearbeitung</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>Smartphone- und Tablet-Hilfe</h3>
+        <ul>
+          <li>Apps installieren und verwalten</li>
+          <li>WhatsApp, E-Mails &amp; Videoanrufe</li>
+          <li>Sicherer Umgang mit persönlichen Daten</li>
+          <li>Schutz vor Betrug</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>Internethilfe</h3>
+        <ul>
+          <li>Sicher im Internet surfen</li>
+          <li>Online-Einkäufe tätigen</li>
+          <li>Facebook, Instagram &amp; Co. nutzen</li>
+          <li>YouTube, Wikipedia, Nachrichtenportale</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROMISE ── -->
+<section class="promise">
+  <div class="container">
+    <h2>Individuelle Betreuung und Geduld</h2>
+    <p>Antworten auf alle Ihre Fragen – ohne komplizierte Fachbegriffe und in Ihrem eigenen Tempo.</p>
+    <div class="promise-icons">
+      <div class="pi"><span class="pi-icon">🕐</span>Ihr eigenes Tempo</div>
+      <div class="pi"><span class="pi-icon">💬</span>Verständliche Sprache</div>
+      <div class="pi"><span class="pi-icon">🤝</span>Persönlich &amp; direkt</div>
+      <div class="pi"><span class="pi-icon">🔒</span>Datenschutz im Blick</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COURSES ── -->
+<section id="kurse">
+  <div class="container">
+    <span class="section-label">Weiterbildung</span>
+    <h2>Kurse</h2>
+    <p class="lead">Regelmäßige Kurse zu wichtigen Themen – Termine werden im Mitteilungsblatt angekündigt.</p>
+
+    <div class="courses-list">
+      <div class="course-item">
+        <div class="course-dot"></div>
+        <div>
+          <div class="course-text">Kurs zur Computernutzung</div>
+          <div class="course-note">Grundlagen und Alltagsfunktionen verständlich erklärt</div>
+        </div>
+      </div>
+      <div class="course-item">
+        <div class="course-dot"></div>
+        <div>
+          <div class="course-text">Kurs zur Internetsicherheit</div>
+          <div class="course-note">Sicher surfen, Betrug erkennen, Passwörter schützen</div>
+        </div>
+      </div>
+      <div class="course-item" style="opacity:.6;">
+        <div class="course-dot" style="background:var(--muted)"></div>
+        <div>
+          <div class="course-text">Weitere Kurse folgen</div>
+          <div class="course-note">Ankündigungen im Allensbacher Mitteilungsblatt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section class="contact-bg" id="kontakt">
+  <div class="container">
+    <span class="section-label">So finden Sie uns</span>
+    <h2>Kontakt &amp; Sprechzeiten</h2>
+
+    <div class="contact-grid">
+      <div class="contact-block">
+        <h3>Erreichbarkeit</h3>
+        <a href="mailto:computeria-allensbach@t-online.de">computeria-allensbach@t-online.de</a>
+        <a href="tel:07533940524">07533 940524</a>
+        <a href="https://www.mein-platz-im-alter.com/index.php/computeria" target="_blank" rel="noopener">
+          www.mein-platz-im-alter.com
+        </a>
+      </div>
+      <div class="contact-block">
+        <h3>Sprechzeiten</h3>
+        <table class="hours-table">
+          <tr>
+            <td>Montags</td>
+            <td>ab 15:00 Uhr</td>
+          </tr>
+          <tr>
+            <td>Ort</td>
+            <td>Vereinsheim, Radolfzeller Str. 25, Allensbach</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>© 2025 Allensbacher Computeria · <a href="mailto:computeria-allensbach@t-online.de" style="color:inherit">computeria-allensbach@t-online.de</a></p>
+</footer>
+
+<script>
+  const btn = document.getElementById('themeToggle');
+  const root = document.documentElement;
+
+  // Restore saved theme
+  const saved = localStorage.getItem('theme') || 'light';
+  if (saved === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+    btn.textContent = '☀️';
+  }
+
+  btn.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      root.removeAttribute('data-theme');
+      btn.textContent = '🌙';
+      localStorage.setItem('theme', 'light');
+    } else {
+      root.setAttribute('data-theme', 'dark');
+      btn.textContent = '☀️';
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+</script>
+</body>
+</html>
